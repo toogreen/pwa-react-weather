@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 import { fetchWeather } from './api/fetchWeather';
 import './App.css';
+import $ from "jquery"
 
 
 const App = () => {
@@ -14,6 +15,7 @@ const App = () => {
             // console.log(DataView)
             setWeather(data);
             setQuery('');
+            $(document.activeElement).filter(':input:focus').blur();
         }
     }
 
