@@ -1,17 +1,32 @@
 import React, { useState } from 'react';
-
 import { fetchWeather } from './api/fetchWeather';
 import './App.css';
-import $ from "jquery"
+import $ from "jquery";
+import getUserLocale from 'get-user-locale';
 
+
+// Determine language from the user's computer or browser
+
+const locale =() => {
+  
+  if (getUserLocale().includes("fr")) {
+    return(true)
+  } else {
+    return(false)
+  }
+}
 
 const App = () => {
     const [query, setQuery] = useState('');
-    const [weather, setWeather] = useState({})
+    const [weather, setWeather] = useState({});
+    const [lang, setLang] = useState(locale);
+
+    // This is to toggle from FR to EN
+    const toggleLang = () => setLang(!lang); 
 
     const search = async (e) => {
         if (e.key === 'Enter') {
-            const data = await fetchWeather(query);
+            const data = await fetchWeather(query, lang);
             // console.log(DataView)
             setWeather(data);
             setQuery('');
@@ -48,14 +63,18 @@ const App = () => {
 
     return(
         <div className="main-container">
+
+            <button onClick={() => {toggleLang();}} >{lang ? "EN" : "FR"}</button>
+            
             <input 
                 type="text"
                 className="search"
-                placeholder="Search for a city..."
+                placeholder={lang ? "Entrez une ville" : "Enter a city"}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyPress={search}
             />
+
             {weather.main && (
                 <div className="city">
                     <h2 className="city-name">
