@@ -7,7 +7,8 @@ html, body, #root {
 }
 
 .main-container {
-    background: linear-gradient( rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.418) ), url('https://hdwallpaper20.com/wp-content/uploads/2017/07/wallpaper-wp4001752.jpg');
+    /* background: linear-gradient( rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.418) ), url('https://hdwallpaper20.com/wp-content/uploads/2017/07/wallpaper-wp4001752.jpg'); */
+    background: linear-gradient( rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.45) ), url('https://lh3.googleusercontent.com/pw/ACtC-3f9mWN84-N94mhwK93EM2j2BCsT_nptnlT8AIWAJgzlq8Fl5uVKLmDdF4yBDLZniq7XVs02MniCjEZ_12hccS5DxiMOo3xgV8TbRFntDVH5RruZymDu8HI6z0i8eVI8g4ej8UaDCk2iEiHOL97FSMtoHA=w863-h648-no?authuser=0');
     background-size: cover;
     background-position: center;
 }
