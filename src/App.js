@@ -20,15 +20,16 @@ const App = () => {
     const [query, setQuery] = useState('');
     const [weather, setWeather] = useState({});
     const [lang, setLang] = useState(locale);
+    const [curCity, setcurCity] = useState('');
 
-    // This is to toggle from FR to EN
-    const toggleLang = () => setLang(!lang); 
-
+    // This is the main fucntion to search and fetch data at first
     const search = async (e) => {
         if (e.key === 'Enter') {
             const data = await fetchWeather(query, lang);
+            setcurCity(query)
             // console.log(DataView)
             setWeather(data);
+            // This removes what's in the input box
             setQuery('');
             // Added the below so that Android keyboard disappears when all is done.
             $(document.activeElement).filter(':input:focus').blur();
@@ -61,10 +62,21 @@ const App = () => {
         }
     }
 
+    // This is to toggle from FR to EN and refetch data in the other language
+    const toggleLang = async (e) => {
+        setLang(!lang); 
+        const query = curCity;
+        const data = await fetchWeather(query, !lang);
+        setWeather(data);
+        // This removes what's in the input box
+        setQuery('');
+        $(document.activeElement).filter(':input:focus').blur();
+    } 
+
     return(
         <div className="main-container">
 
-            <button onClick={() => {toggleLang();}} >{lang ? "EN" : "FR"}</button>
+            <button onClick={() => {toggleLang(); }} >{lang ? "EN" : "FR"}</button>
             
             <input 
                 type="text"
