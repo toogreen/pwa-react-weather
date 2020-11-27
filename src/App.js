@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { fetchWeather } from './api/fetchWeather';
+import { fetchWeatherGeo } from './api/fetchWeatherGeo';
 import './App.css';
 import $ from "jquery";
 import getUserLocale from 'get-user-locale';
+import geolocation from "geolocation";
+
 
 
 // Determine language from the user's computer or browser
@@ -16,11 +19,14 @@ const locale =() => {
   }
 }
 
+
+
 const App = () => {
     const [query, setQuery] = useState('');
     const [weather, setWeather] = useState({});
     const [lang, setLang] = useState(locale);
     const [curCity, setcurCity] = useState('');
+
 
     // This is the main fucntion to search and fetch data at first
     const search = async (e) => {
@@ -62,16 +68,35 @@ const App = () => {
         }
     }
 
+    const geoSearch = async (e) => {
+        geolocation.getCurrentPosition( async function (err, position) {
+            if (err) throw err
+            setQuery(weather.name);
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            const data = await fetchWeatherGeo(latitude, longitude, lang, query);
+            setWeather(data);
+            setQuery('');
+            $(document.activeElement).filter(':input:focus').blur();
+        })
+    }
+
+    geolocation.getCurrentPosition( async function (err, position) {
+        if (err) throw err 
+        geoSearch();
+    })
+
     // This is to toggle from FR to EN and refetch data in the other language
     const toggleLang = async (e) => {
         setLang(!lang); 
-        const query = curCity;
+        const query = weather.name;
         const data = await fetchWeather(query, !lang);
         setWeather(data);
         // This removes what's in the input box
         setQuery('');
         $(document.activeElement).filter(':input:focus').blur();
     } 
+    
 
     return(
         <div className="main-container">
