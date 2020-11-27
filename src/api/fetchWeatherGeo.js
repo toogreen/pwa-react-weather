@@ -12,8 +12,7 @@ export const fetchWeatherGeo = async (latitude, longitude, lang, query) => {
             lon: longitude,
             units: 'metric',
             appid: API_KEY,
-            lang: lang ? 'fr' : 'en',
-            q: query
+            lang: lang ? 'fr' : 'en'
         }
         
     });

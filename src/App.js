@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { fetchWeather } from './api/fetchWeather';
 import { fetchWeatherGeo } from './api/fetchWeatherGeo';
 import './App.css';
@@ -81,10 +81,18 @@ const App = () => {
         })
     }
 
-    geolocation.getCurrentPosition( async function (err, position) {
-        if (err) throw err 
-        geoSearch();
-    })
+    useEffect(() => {
+        geolocation.getCurrentPosition( async function (err, position) {
+            if (err) {
+                throw err
+            } else {
+                geoSearch();
+            }
+        })
+    }, []);
+
+
+
 
     // This is to toggle from FR to EN and refetch data in the other language
     const toggleLang = async (e) => {
