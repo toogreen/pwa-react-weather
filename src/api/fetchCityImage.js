@@ -21,22 +21,29 @@ const isReusableLicense = (license = '') => (
 
 const isLikelyCityPhoto = (title, tags, width, height, cityTerms) => {
     const searchableText = normalize(`${title} ${tags}`);
-    const excludedTerms = /\b(map|maps|mapping|locator|location|diagram|chart|atlas|route|routes|transit|metro|subway|coat of arms|flag|logo|illustration|drawing)\b/;
+    const excludedTerms = /\b(map|maps|mapping|locator|location|diagram|chart|atlas|route|routes|transit|metro|subway|coat of arms|flag|logo|illustration|drawing|car|cars|automobile|vehicle|bus|busworld|truck|motorcycle|racing|motorsport|dealership)\b/;
+    const cityscapeTerms = /\b(skyline|cityscape|panorama|downtown)\b/;
+    const normalizedTitle = ` ${normalize(title)} `;
 
-    return cityTerms.every((term) => normalize(title).includes(term))
+    return cityTerms.every((term) => normalizedTitle.includes(` ${term} `))
         && !excludedTerms.test(searchableText)
+        && cityscapeTerms.test(searchableText)
         && Number(width) > Number(height);
 };
 
 export const fetchCityImage = async (cityName, countryCode) => {
-    const cityTerms = normalize(cityName).split(/\s+/).filter(Boolean);
+    const normalizedCity = normalize(cityName);
+    const searchCityName = normalizedCity === 'bruxelles' && countryCode === 'BE'
+        ? 'Brussels'
+        : cityName;
+    const cityTerms = normalize(searchCityName).split(/\s+/).filter(Boolean);
     if (!cityTerms.length) {
         return null;
     }
 
     const searchQueries = [
-        `${cityName} skyline`,
-        [cityName, countryCode].filter(Boolean).join(' ')
+        `${searchCityName} skyline`,
+        [searchCityName, countryCode].filter(Boolean).join(' ')
     ];
 
     try {
@@ -91,7 +98,7 @@ export const fetchCityImage = async (cityName, countryCode) => {
 
     const { data } = await axios.get(OPENVERSE_API_URL, {
         params: {
-            q: `${cityName} skyline`,
+            q: `${searchCityName} skyline`,
             license: 'cc0,by,by-sa',
             page_size: 20
         }
