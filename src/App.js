@@ -35,6 +35,35 @@ const getWeatherErrorMessage = (error, lang) => {
     return lang ? "Impossible de récupérer la météo. Réessayez." : "Could not load weather. Please try again.";
 };
 
+const INSTALL_PROMPT_DISMISSED_KEY = 'weather-app-install-prompt-dismissed';
+
+const isIOSDevice = () => (
+    /iPad|iPhone|iPod/.test(navigator.userAgent)
+    || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+);
+
+const isAppInstalled = () => (
+    window.matchMedia('(display-mode: standalone)').matches
+    || navigator.standalone === true
+);
+
+const hasDismissedInstallPrompt = () => {
+    try {
+        return window.localStorage.getItem(INSTALL_PROMPT_DISMISSED_KEY) === 'true';
+    } catch (error) {
+        console.warn('Unable to read install prompt preference.', error);
+        return false;
+    }
+};
+
+const saveInstallPromptDismissed = () => {
+    try {
+        window.localStorage.setItem(INSTALL_PROMPT_DISMISSED_KEY, 'true');
+    } catch (error) {
+        console.warn('Unable to save install prompt preference.', error);
+    }
+};
+
 const App = () => {
     const [query, setQuery] = useState('');
     const [weather, setWeather] = useState({});
@@ -42,8 +71,43 @@ const App = () => {
     const [cityImage, setCityImage] = useState(null);
     const [imageCity, setImageCity] = useState(null);
     const [searchError, setSearchError] = useState('');
+    const [deferredInstallPrompt, setDeferredInstallPrompt] = useState(null);
+    const [showInstallPrompt, setShowInstallPrompt] = useState(false);
+    const [iosInstallInstructions, setIosInstallInstructions] = useState(false);
     const langRef = useRef(lang);
     langRef.current = lang;
+
+    useEffect(() => {
+        if (isAppInstalled() || hasDismissedInstallPrompt()) {
+            return undefined;
+        }
+
+        let promptTimer;
+        const onBeforeInstallPrompt = (event) => {
+            event.preventDefault();
+            setDeferredInstallPrompt(event);
+            promptTimer = window.setTimeout(() => setShowInstallPrompt(true), 2000);
+        };
+        const onAppInstalled = () => {
+            window.clearTimeout(promptTimer);
+            setShowInstallPrompt(false);
+            setDeferredInstallPrompt(null);
+        };
+
+        if (isIOSDevice()) {
+            setIosInstallInstructions(true);
+            promptTimer = window.setTimeout(() => setShowInstallPrompt(true), 2000);
+        }
+
+        window.addEventListener('beforeinstallprompt', onBeforeInstallPrompt);
+        window.addEventListener('appinstalled', onAppInstalled);
+
+        return () => {
+            window.clearTimeout(promptTimer);
+            window.removeEventListener('beforeinstallprompt', onBeforeInstallPrompt);
+            window.removeEventListener('appinstalled', onAppInstalled);
+        };
+    }, []);
 
     useEffect(() => {
         if (!imageCity?.name) {
@@ -160,12 +224,81 @@ const App = () => {
         }
     };
 
+    const dismissInstallPrompt = () => {
+        saveInstallPromptDismissed();
+        setShowInstallPrompt(false);
+    };
+
+    const installApp = async () => {
+        if (!deferredInstallPrompt) {
+            return;
+        }
+
+        try {
+            await deferredInstallPrompt.prompt();
+            const { outcome } = await deferredInstallPrompt.userChoice;
+            setDeferredInstallPrompt(null);
+            if (outcome === 'accepted') {
+                setShowInstallPrompt(false);
+            } else {
+                dismissInstallPrompt();
+            }
+        } catch (error) {
+            console.error('Unable to show the app installation prompt.', error);
+            setDeferredInstallPrompt(null);
+            dismissInstallPrompt();
+        }
+    };
+
     const backgroundImage = cityImage
         ? `linear-gradient( rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.45) ), url("${cityImage.url}")`
         : getCityBackground(weather.name || query);
 
     return (
         <div className="main-container" style={{ backgroundImage }}>
+            {showInstallPrompt && (
+                <div className="install-prompt-backdrop">
+                    <section
+                        className="install-prompt"
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="install-prompt-title"
+                    >
+                        <button
+                            className="install-prompt-close"
+                            type="button"
+                            aria-label={lang ? "Fermer" : "Close"}
+                            onClick={dismissInstallPrompt}
+                        >
+                            &times;
+                        </button>
+                        <h2 id="install-prompt-title">
+                            {lang ? "Installer l’application météo" : "Install the Weather App"}
+                        </h2>
+                        <p>
+                            {iosInstallInstructions
+                                ? (lang
+                                    ? "Pour installer l’application, touchez Partager, puis « Sur l’écran d’accueil »."
+                                    : "To install, tap Share, then “Add to Home Screen.”")
+                                : (lang
+                                    ? "Ajoutez la météo à votre appareil pour y accéder rapidement."
+                                    : "Add weather to your device for quick access.")}
+                        </p>
+                        <div className="install-prompt-actions">
+                            {deferredInstallPrompt && (
+                                <button type="button" onClick={installApp}>
+                                    {lang ? "Installer" : "Install"}
+                                </button>
+                            )}
+                            <button type="button" onClick={dismissInstallPrompt}>
+                                {iosInstallInstructions
+                                    ? (lang ? "Compris" : "Got it")
+                                    : (lang ? "Plus tard" : "Maybe later")}
+                            </button>
+                        </div>
+                    </section>
+                </div>
+            )}
             {cityImage && (
                 <>
                     <img

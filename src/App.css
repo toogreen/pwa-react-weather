@@ -35,6 +35,62 @@ html, body, #root {
     display: none;
 }
 
+.install-prompt-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.55);
+}
+
+.install-prompt {
+    position: relative;
+    width: min(100%, 360px);
+    padding: 28px 24px 20px;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+.install-prompt h2 {
+    margin: 0 24px 12px;
+}
+
+.install-prompt p {
+    margin: 0 0 20px;
+    line-height: 1.5;
+    text-transform: none;
+}
+
+.install-prompt-close {
+    top: 8px;
+    right: 8px;
+    left: auto;
+    margin: 0;
+    padding: 5px 9px;
+    background: transparent;
+    font-size: 1.5rem;
+}
+
+.install-prompt-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.install-prompt-actions button {
+    position: static;
+    margin: 0;
+    padding: 10px 14px;
+    background: #0a1f44;
+    color: #fff;
+    font-size: 1rem;
+}
+
 .search-error {
     margin: -3% 0 4%;
     padding: 10px 14px;
