@@ -224,6 +224,14 @@ const App = () => {
 
     return (
         <div className="main-container" style={{ backgroundImage }}>
+            <a className="advertisement" href="https://aads.com/advertise/?partner=2458814">
+                <img
+                    src="https://aads.com/a_ads_banners/gif/english/468x60/simple_v1.gif"
+                    alt="Advertise with Anonymous Ads"
+                    width="468"
+                    height="60"
+                />
+            </a>
             {!appInstalled && (iosDevice || deferredInstallPrompt) && (
                 <>
                     <button
@@ -274,6 +282,10 @@ const App = () => {
                 }}
                 onKeyPress={search}
             />
+
+            <footer className="page-footer">
+                <a href="https://toogreen.ca">Copyright 2026 toogreen.ca</a>
+            </footer>
 
             {searchError && <p className="search-error" role="alert">{searchError}</p>}
 

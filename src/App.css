@@ -18,6 +18,35 @@ html, body, #root {
     flex-direction: column;
 }
 
+.advertisement {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    width: min(468px, calc(100% - 120px));
+    transform: translateX(-50%);
+}
+
+.advertisement img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.page-footer {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    max-width: calc(100% - 20px);
+    transform: translateX(-50%);
+    text-align: center;
+}
+
+.page-footer a {
+    color: #fff;
+    text-decoration: none;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
 .image-credit {
     position: absolute;
     right: 8px;
