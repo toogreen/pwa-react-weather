@@ -35,60 +35,23 @@ html, body, #root {
     display: none;
 }
 
-.install-prompt-backdrop {
-    position: fixed;
-    inset: 0;
-    z-index: 10;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    background: rgba(0, 0, 0, 0.55);
-}
-
-.install-prompt {
-    position: relative;
-    width: min(100%, 360px);
-    padding: 28px 24px 20px;
-    border-radius: 16px;
-    background: #fff;
-    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.3);
-    text-align: center;
-}
-
-.install-prompt h2 {
-    margin: 0 24px 12px;
-}
-
-.install-prompt p {
-    margin: 0 0 20px;
-    line-height: 1.5;
-    text-transform: none;
-}
-
-.install-prompt-close {
-    top: 8px;
-    right: 8px;
+.install-button {
+    right: 0;
     left: auto;
-    margin: 0;
-    padding: 5px 9px;
-    background: transparent;
-    font-size: 1.5rem;
 }
 
-.install-prompt-actions {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-}
-
-.install-prompt-actions button {
-    position: static;
-    margin: 0;
-    padding: 10px 14px;
-    background: #0a1f44;
-    color: #fff;
-    font-size: 1rem;
+.install-help {
+    position: absolute;
+    top: 54px;
+    right: 10px;
+    z-index: 2;
+    max-width: min(280px, calc(100% - 20px));
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    font-size: 0.9rem;
+    line-height: 1.4;
 }
 
 .search-error {
