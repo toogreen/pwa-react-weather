@@ -49,8 +49,8 @@ html, body, #root {
 
 .image-credit {
     position: absolute;
-    right: 8px;
-    bottom: 8px;
+    left: 50%;
+    bottom: 40px;
     max-width: calc(100% - 16px);
     padding: 4px 7px;
     border-radius: 4px;
@@ -58,6 +58,9 @@ html, body, #root {
     color: #fff;
     font-size: 0.75rem;
     text-decoration: none;
+    text-align: center;
+    transform: translateX(-50%);
+    box-sizing: border-box;
 }
 
 .background-image-preload {
