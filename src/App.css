@@ -173,6 +173,11 @@ p {
 }
 
 @media only screen and (max-width: 600px) {
+    .search,
+    .city {
+        transform: translateY(-8px);
+    }
+
     .search {
         padding: 20px 15%;
     }
