@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { fetchWeather } from './api/fetchWeather';
 import { fetchWeatherGeo } from './api/fetchWeatherGeo';
 import { fetchCityImage } from './api/fetchCityImage';
+import { getStoredConsent, storeConsent, loadAdSense } from './consent';
 import './App.css';
 import $ from "jquery";
 import getUserLocale from 'get-user-locale';
@@ -55,6 +56,8 @@ const App = () => {
     const [deferredInstallPrompt, setDeferredInstallPrompt] = useState(null);
     const [showInstallInstructions, setShowInstallInstructions] = useState(false);
     const [appInstalled, setAppInstalled] = useState(isAppInstalled);
+    const [adConsent, setAdConsent] = useState(getStoredConsent);
+    const [showConsentBanner, setShowConsentBanner] = useState(() => getStoredConsent() === null);
     const iosDevice = isIOSDevice();
     const langRef = useRef(lang);
     langRef.current = lang;
@@ -82,6 +85,24 @@ const App = () => {
             window.removeEventListener('appinstalled', onAppInstalled);
         };
     }, []);
+
+    useEffect(() => {
+        if (adConsent === 'granted') {
+            loadAdSense();
+        }
+    }, [adConsent]);
+
+    const chooseConsent = (value) => {
+        const hadGranted = adConsent === 'granted';
+        storeConsent(value);
+        setAdConsent(value);
+        setShowConsentBanner(false);
+
+        // AdSense cannot be unloaded once running, so reload to stop it after consent is withdrawn
+        if (hadGranted && value === 'denied') {
+            window.location.reload();
+        }
+    };
 
     useEffect(() => {
         if (!imageCity?.name) {
@@ -285,7 +306,38 @@ const App = () => {
 
             <footer className="page-footer">
                 <a href="https://toogreen.ca">Copyright 2026 toogreen.ca</a>
+                {' · '}
+                <a href={`${process.env.PUBLIC_URL}/privacy.html`}>{lang ? "Confidentialité" : "Privacy"}</a>
+                {' · '}
+                <a href={`${process.env.PUBLIC_URL}/terms.html`}>{lang ? "Conditions" : "Terms"}</a>
+                {' · '}
+                <button
+                    className="footer-link"
+                    type="button"
+                    onClick={() => setShowConsentBanner(true)}
+                >
+                    {lang ? "Témoins" : "Cookies"}
+                </button>
             </footer>
+
+            {showConsentBanner && (
+                <section className="consent-banner" role="dialog" aria-live="polite" aria-label={lang ? "Consentement aux témoins" : "Cookie consent"}>
+                    <p className="consent-text">
+                        {lang
+                            ? "Nous aimerions utiliser des témoins (cookies) de Google AdSense pour afficher des publicités, qui peuvent être personnalisées selon votre navigation. L’application fonctionne que vous acceptiez ou non. "
+                            : "We'd like to use Google AdSense cookies to show ads, which may be personalized based on your browsing. The app works whether you accept or not. "}
+                        <a href={`${process.env.PUBLIC_URL}/privacy.html`}>{lang ? "En savoir plus" : "Learn more"}</a>
+                    </p>
+                    <div className="consent-actions">
+                        <button type="button" onClick={() => chooseConsent('denied')}>
+                            {lang ? "Refuser" : "Refuse"}
+                        </button>
+                        <button type="button" onClick={() => chooseConsent('granted')}>
+                            {lang ? "Accepter" : "Accept"}
+                        </button>
+                    </div>
+                </section>
+            )}
 
             {searchError && <p className="search-error" role="alert">{searchError}</p>}
 

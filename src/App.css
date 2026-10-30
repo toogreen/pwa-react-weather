@@ -41,10 +41,65 @@ html, body, #root {
     text-align: center;
 }
 
-.page-footer a {
+.page-footer {
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+    white-space: nowrap;
+}
+
+.page-footer a,
+.page-footer .footer-link {
     color: #fff;
     text-decoration: none;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+.page-footer .footer-link {
+    position: static;
+    margin: 0;
+    padding: 0;
+    background: none;
+    font: inherit;
+}
+
+.consent-banner {
+    position: fixed;
+    left: 50%;
+    bottom: 10px;
+    z-index: 10;
+    width: min(560px, calc(100% - 20px));
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.97);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+    transform: translateX(-50%);
+    box-sizing: border-box;
+}
+
+.consent-text {
+    margin: 0 0 12px;
+    text-transform: none;
+    letter-spacing: normal;
+    line-height: 1.4;
+}
+
+.consent-text a {
+    color: #0a1f44;
+}
+
+.consent-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.consent-actions button {
+    position: static;
+    margin: 0;
+    padding: 10px 18px;
+    background: #0a1f44;
+    color: #fff;
+    font-size: 0.9rem;
 }
 
 .image-credit {

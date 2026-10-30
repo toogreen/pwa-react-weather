@@ -13,6 +13,21 @@
 
     <link rel="manifest" href="./manifest.json" />
 
+    <!-- Google Consent Mode v2: everything is denied until the user accepts in the cookie banner.
+         The AdSense script itself is loaded from src/consent.js only after consent. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('consent', 'default', {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied'
+      });
+    </script>
+    <meta name="google-adsense-account" content="ca-pub-5829964164858117" />
+    <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous" />
+
     <title>Weather App</title>
   </head>
   <body>
